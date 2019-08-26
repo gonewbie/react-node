@@ -1,29 +1,32 @@
-import React, { useState, useCallback } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
-import { useDispatch } from "react-redux";
-import { signUpAction } from "../reducers/user";
+import React, { useState, useCallback } from 'react';
+import {
+  Button, Checkbox, Form, Input,
+} from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { SIGN_UP_REQUEST } from '../reducers/user';
 
 export const useInput = (initValue = null) => {
   const [value, setter] = useState(initValue);
-  const handler = useCallback(e => {
+  const handler = useCallback((e) => {
     setter(e.target.value);
   }, []);
   return [value, handler];
 };
 
 const Signup = () => {
-  const [passwordCheck, setPasswordCheck] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState('');
   const [term, setTerm] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [termError, setTermError] = useState(false);
 
-  const [id, onChangeId] = useInput("");
-  const [nick, onChangeNick] = useInput("");
-  const [password, onChangePassword] = useInput("");
+  const [id, onChangeId] = useInput('');
+  const [nick, onChangeNick] = useInput('');
+  const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
+  const { isSigningUp } = useSelector((state) => state.user);
 
   const onSubmit = useCallback(
-    e => {
+    (e) => {
       e.preventDefault();
       if (password !== passwordCheck) {
         return setPasswordError(true);
@@ -31,26 +34,27 @@ const Signup = () => {
       if (!term) {
         return setTermError(true);
       }
-      dispatch(
-        signUpAction({
+      dispatch({
+        type: SIGN_UP_REQUEST,
+        data: {
           id,
           password,
-          nick
-        })
-      );
+          nick,
+        },
+      });
     },
-    [password, passwordCheck, term]
+    [password, passwordCheck, term],
   );
 
   const onChangePasswordCheck = useCallback(
-    e => {
+    (e) => {
       setPasswordError(e.target.value !== password);
       setPasswordCheck(e.target.value);
     },
-    [password]
+    [password],
   );
 
-  const onChangeTerm = useCallback(e => {
+  const onChangeTerm = useCallback((e) => {
     setTermError(false);
     setTerm(e.target.checked);
   }, []);
@@ -95,7 +99,7 @@ const Signup = () => {
             onChange={onChangePasswordCheck}
           />
           {passwordError && (
-            <div style={{ color: "red" }}>비밀번호가 일치하지 않습니다.</div>
+            <div style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</div>
           )}
         </div>
         <div>
@@ -103,11 +107,11 @@ const Signup = () => {
             동의합니다.
           </Checkbox>
           {termError && (
-            <div style={{ color: "red" }}>약관에 동의하셔야 합니다.</div>
+            <div style={{ color: 'red' }}>약관에 동의하셔야 합니다.</div>
           )}
         </div>
         <div style={{ marginTop: 10 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isSigningUp}>
             가입하기
           </Button>
         </div>
