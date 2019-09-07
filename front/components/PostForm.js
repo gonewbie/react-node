@@ -16,13 +16,16 @@ const PostForm = () => {
 
   const onSubmitForm = useCallback((e) => {
     e.preventDefault();
+    // if (!text || !text.trim()) {
+    //   return alert('게시글을 작성하세요');
+    // }
     dispatch({
       type: ADD_POST_REQUEST,
       data: {
-        text,
+        content: text,
       },
     });
-  }, []);
+  }, [text]);
 
   const onChangeText = useCallback((e) => {
     setText(e.target.value);
@@ -42,7 +45,7 @@ const PostForm = () => {
         {imagePaths.map((v) => (
           <div key={v} style={{ display: 'inline-block' }}>
             <img
-              src={`http://localhost:3065/${v}`}
+              src={`http://localhost:8080/${v}`}
               style={{ width: '200px' }}
               alt={v}
             />

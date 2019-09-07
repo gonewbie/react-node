@@ -21,7 +21,7 @@ const Signup = () => {
   const [termError, setTermError] = useState(false);
 
   const [id, onChangeId] = useInput('');
-  const [nick, onChangeNick] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
   const { isSigningUp, me } = useSelector((state) => state.user);
@@ -45,13 +45,13 @@ const Signup = () => {
       dispatch({
         type: SIGN_UP_REQUEST,
         data: {
-          id,
+          userId: id,
           password,
-          nick,
+          nickname,
         },
       });
     },
-    [password, passwordCheck, term],
+    [id, nickname, password, passwordCheck, term],
   );
 
   const onChangePasswordCheck = useCallback(
@@ -80,9 +80,9 @@ const Signup = () => {
           <br />
           <Input
             name="user-nick"
-            value={nick}
+            value={nickname}
             required
-            onChange={onChangeNick}
+            onChange={onChangeNickname}
           />
         </div>
         <div>

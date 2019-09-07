@@ -3,41 +3,96 @@ import {
 } from 'redux-saga/effects';
 import axios from 'axios';
 import {
-  LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
+  LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE,
+  LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE,
+  LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAILURE,
+  SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
 } from '../reducers/user';
 
-function loginAPI() {
-  return axios.post('/login');
+function logInAPI(logInData) {
+  return axios.post('/user/login', logInData, {
+    withCredentials: true,
+  });
 }
 
-function* login() {
+function* logIn(action) {
   try {
-    // yield call(loginAPI);
-    yield delay(2000);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
+      data: result.data,
     });
   } catch (e) {
     console.error(e);
     yield put({
       type: LOG_IN_FAILURE,
+      error: e,
     });
   }
 }
 
-function* watchLogin() {
-  yield takeEvery(LOG_IN_REQUEST, login);
+function* watchlogIn() {
+  yield takeEvery(LOG_IN_REQUEST, logIn);
 }
 
-function signUpAPI() {
-  return axios.post('/login');
+function logOutAPI() {
+  return axios.post('/user/logout', {}, {
+    withCredentials: true,
+  });
 }
 
-function* signUp() {
+function* logOut() {
   try {
-    // yield call(signUpAPI);
-    yield delay(2000);
-    throw new Error('에러');
+    yield call(logOutAPI);
+    yield put({
+      type: LOG_OUT_SUCCESS,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOG_OUT_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchlogOut() {
+  yield takeEvery(LOG_OUT_REQUEST, logOut);
+}
+
+function loadUserAPI() {
+  return axios.get('/user/', {
+    withCredentials: true,
+  });
+}
+
+function* loadUser(action) {
+  try {
+    const result = yield call(loadUserAPI, action.data);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadUser() {
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
+}
+
+function signUpAPI(signUpData) {
+  return axios.post('/user/', signUpData);
+}
+
+function* signUp(action) {
+  try {
+    yield call(signUpAPI, action.data);
     yield put({
       type: SIGN_UP_SUCCESS,
     });
@@ -56,7 +111,9 @@ function* watchSignup() {
 
 export default function* userSaga() {
   yield all([
-    fork(watchLogin),
+    fork(watchlogIn),
+    fork(watchlogOut),
+    fork(watchLoadUser),
     fork(watchSignup),
   ]);
 }
