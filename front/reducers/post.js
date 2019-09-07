@@ -18,16 +18,6 @@ export const initialState = {
   commentAdded: false,
 };
 
-const dummyPost = {
-  id: 2,
-  User: {
-    id: 1,
-    nickname: '리액트',
-  },
-  content: '더미 포스트',
-  Comments: [],
-};
-
 const dummyComment = {
   id: 1,
   User: {
@@ -90,6 +80,23 @@ export const EDIT_POST_FAILURE = 'EDIT_POST_FAILURE';
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case LOAD_MAIN_POSTS_REQUEST: {
+      return {
+        ...state,
+        mainPosts: [],
+      };
+    }
+    case LOAD_MAIN_POSTS_SUCCESS: {
+      return {
+        ...state,
+        mainPosts: action.data,
+      };
+    }
+    case LOAD_MAIN_POSTS_FAILURE: {
+      return {
+        ...state,
+      };
+    }
     case ADD_POST_REQUEST: {
       return {
         ...state,
