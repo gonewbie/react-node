@@ -60,8 +60,8 @@ function* watchlogOut() {
   yield takeEvery(LOG_OUT_REQUEST, logOut);
 }
 
-function loadUserAPI() {
-  return axios.get('/user/', {
+function loadUserAPI(userId) {
+  return axios.get(userId ? `/user/${userId}` : '/user/', {
     withCredentials: true,
   });
 }
