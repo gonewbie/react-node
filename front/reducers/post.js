@@ -25,7 +25,7 @@ export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
 export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
 export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
 
-export const REMOVE_IMAGES = 'REMOVE_IMAGES';
+export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -84,6 +84,12 @@ export default (state = initialState, action) => {
         ...state,
       };
     }
+    case REMOVE_IMAGE: {
+      return {
+        ...state,
+        imagePaths: state.imagePaths.filter((v, i) => i !== action.index),
+      };
+    }
     case ADD_POST_REQUEST: {
       return {
         ...state,
@@ -98,6 +104,7 @@ export default (state = initialState, action) => {
         isAddingPost: false,
         mainPosts: [action.data, ...state.mainPosts],
         postAdded: true,
+        imagePaths: [],
       };
     }
     case ADD_POST_FAILURE: {
@@ -152,6 +159,22 @@ export default (state = initialState, action) => {
       };
     }
     case LOAD_COMMENTS_FAILURE: {
+      return {
+        ...state,
+      };
+    }
+    case UPLOAD_IMAGES_REQUEST: {
+      return {
+        ...state,
+      };
+    }
+    case UPLOAD_IMAGES_SUCCESS: {
+      return {
+        ...state,
+        imagePaths: [...state.imagePaths, ...action.data],
+      };
+    }
+    case UPLOAD_IMAGES_FAILURE: {
       return {
         ...state,
       };

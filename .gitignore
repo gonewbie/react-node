@@ -3,3 +3,4 @@ yarn.lock
 front/.next/*
 .env
 back/config/*
+back/uploads/*
