@@ -22,7 +22,6 @@ const upload = multer({
 
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
-    console.log(req.body.content);
     const hashtags = req.body.content.match(/#[^\s]+/g);
     const newPost = await db.Post.create({
       content: req.body.content,
