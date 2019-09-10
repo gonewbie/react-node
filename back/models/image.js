@@ -3,12 +3,12 @@ module.exports = (sequelize, DataTypes) => {
     src: {
       type: DataTypes.STRING(200), // 긴 글
       allowNull: false,
-    }
+    },
   }, {
     charset: 'utf8',
     collate: 'utf8_general_ci',
   });
-  
+
   Image.associate = (db) => {
     db.Image.belongsTo(db.Post);
   };

@@ -72,6 +72,7 @@ function* loadUser(action) {
     yield put({
       type: LOAD_USER_SUCCESS,
       data: result.data,
+      me: !action.data,
     });
   } catch (e) {
     console.error(e);

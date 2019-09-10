@@ -3,7 +3,7 @@ const db = require('../models');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
       include: [{
@@ -11,6 +11,11 @@ router.get('/', async (req, res) => {
         attributes: ['id', 'nickname'],
       }, {
         model: db.Image,
+      }, {
+        model: db.User,
+        through: 'Like',
+        as: 'Likers',
+        attributes: ['id'],
       }],
       order: [['createdAt', 'DESC']],
     });

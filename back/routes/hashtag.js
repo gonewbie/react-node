@@ -3,7 +3,7 @@ const db = require('../models');
 
 const router = express.Router();
 
-router.get('/:tag', async (req, res) => {
+router.get('/:tag', async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
       include: [{
@@ -14,13 +14,18 @@ router.get('/:tag', async (req, res) => {
         attributes: ['id', 'nickname'],
       }, {
         model: db.Image,
+      }, {
+        model: db.User,
+        through: 'Like',
+        as: 'Likers',
+        attributes: ['id'],
       }],
       order: [['createdAt', 'DESC']],
     });
-    res.json(posts);
+    return res.json(posts);
   } catch (e) {
     console.error(e);
-    next(e);
+    return next(e);
   }
 });
 
