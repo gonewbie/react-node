@@ -1,14 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
-  Card, Icon, Button, Avatar, Input, Form, List, Comment,
+  Card, Icon, Button, Avatar, Input, Form, List, Comment, Popover,
 } from 'antd';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST,
+  ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST,
+  UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST,
 } from '../reducers/post';
 import PostImages from './PostImages';
+import PostCardContent from './PostCardContent';
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -76,35 +78,61 @@ const PostCard = ({ post }) => {
       type: RETWEET_REQUEST,
       data: post.id,
     });
-  }, [me, post && post.id]);
+  }, [me && me.id, post && post.id]);
 
   return (
     <div>
       <Card
         key={+post.createdAt}
-        cover={post.Images[0] && <PostImages images={post.Images} />}
+        cover={post.Images && post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
           <Icon type="heart" key="heart" theme={liked ? 'twoTone' : ''} twoToneColor="#eb2f96" onClick={onToggleLike} />,
           <Icon type="message" key="message" onClick={onToggleComment} />,
-          <Icon type="ellipsis" key="ellipsis" />,
+          <Popover
+            key="ellipsis"
+            content={(
+              <Button.Group>
+                {me && post.UserId === me.id
+                  ? (
+                    <>
+                      <Button>수정</Button>
+                      <Button type="danger">삭제</Button>
+                    </>
+                  )
+                  : <Button>신호</Button>}
+              </Button.Group>
+            )}
+          >
+            <Icon type="ellipsis" />
+          </Popover>,
         ]}
+        title={post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
         extra={<Button>팔로우</Button>}
       >
-        <Card.Meta
-          avatar={<Link href="/user/[id]" as={`/user/${post.User.id}`}><a><Avatar>{post.User.nickname[0]}</Avatar></a></Link>}
-          title={post.User.nickname}
-          description={(
-            <div>
-              {post.content.split(/(#[^\s]+)/g).map((v) => {
-                if (v.match(/#[^\s]+/)) {
-                  return <Link href="hashtag/[tag]" as={`/hashtag/${v.slice(1)}`} key={v}><a>{v}</a></Link>;
-                }
-                return v;
-              })}
-            </div>
+        {post.RetweetId && post.Retweet
+          ? (
+            <Card
+              cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}
+            >
+              <Card.Meta
+                avatar={(
+                  <Link href="/user/[id]" as={`/user/${post.Retweet.User.id}`}>
+                    <a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a>
+                  </Link>
+                )}
+                title={post.Retweet.User.nickname}
+                description={<PostCardContent postData={post.Retweet.content} />}
+              />
+            </Card>
+          )
+          : (
+            <Card.Meta
+              avatar={<Link href="/user/[id]" as={`/user/${post.User.id}`}><a><Avatar>{post.User.nickname[0]}</Avatar></a></Link>}
+              title={post.User.nickname}
+              description={<PostCardContent postData={post.content} />}
+            />
           )}
-        />
       </Card>
       {commentFormOpened && (
         <>
@@ -138,8 +166,15 @@ PostCard.propTypes = {
   post: PropTypes.shape({
     User: PropTypes.object,
     content: PropTypes.string,
-    img: PropTypes.string,
+    Images: PropTypes.arrayOf(PropTypes.object),
     createdAt: PropTypes.string,
+    // 개인적인 추가
+    Comments: PropTypes.object,
+    Retweet: PropTypes.object,
+    RetweetId: PropTypes.number,
+    UserId: PropTypes.number,
+    id: PropTypes.number,
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 
