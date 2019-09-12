@@ -9,6 +9,8 @@ export const initialState = {
   followingList: [], // 팔로잉 리스트
   followerList: [], // 팔로워 리스트
   userInfo: null, // 남의 정보
+  isEditingNickname: false, // 닉네임 변경 시도 중
+  editNicknameErrorReason: '',
 };
 
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
@@ -47,6 +49,10 @@ export const UNFOLLOW_USER_FAILURE = 'UNFOLLOW_USER_FAILURE';
 export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
 export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
+
+export const EDIT_NICKNAME_REQUEST = 'EDIT_NICKNAME_REQUEST';
+export const EDIT_NICKNAME_SUCCESS = 'EDIT_NICKNAME_SUCCESS';
+export const EDIT_NICKNAME_FAILURE = 'EDIT_NICKNAME_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 
@@ -236,6 +242,30 @@ const reducer = (state = initialState, action) => {
     case REMOVE_FOLLOWER_FAILURE: {
       return {
         ...state,
+      };
+    }
+    case EDIT_NICKNAME_REQUEST: {
+      return {
+        ...state,
+        isEditingNickname: true,
+        editNicknameErrorReason: '',
+      };
+    }
+    case EDIT_NICKNAME_SUCCESS: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        me: {
+          ...state.me,
+          nickname: action.data,
+        },
+      };
+    }
+    case EDIT_NICKNAME_FAILURE: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        editNicknameErrorReason: action.error,
       };
     }
     default:
