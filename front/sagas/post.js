@@ -14,6 +14,7 @@ import {
   UNLIKE_POST_REQUEST, UNLIKE_POST_SUCCESS, UNLIKE_POST_FAILURE,
   RETWEET_REQUEST, RETWEET_SUCCESS, RETWEET_FAILURE,
 } from '../reducers/post';
+import { ADD_POST_TO_ME } from '../reducers/user';
 
 function loadMainPostsAPI() {
   return axios.get('/posts', {
@@ -54,6 +55,10 @@ function* addPost(action) {
       type: ADD_POST_SUCCESS,
       data: result.data,
     });
+    yield put({ // user reducer 데이터 수정
+      type: ADD_POST_TO_ME,
+      data: result.data.id,
+    });
   } catch (e) {
     console.error(e);
     yield put({
@@ -76,7 +81,7 @@ function loadCommentsAPI(postId) {
 function* loadComments(action) {
   try {
     const result = yield call(loadCommentsAPI, action.data);
-    yield put({
+    yield put({ // post reducer 데이터 수정
       type: LOAD_COMMENTS_SUCCESS,
       data: {
         postId: action.data,

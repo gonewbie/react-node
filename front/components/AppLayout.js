@@ -4,6 +4,7 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 import LoginForm from './LoginForm';
 import UserProfile from './UserProfile';
 import { LOAD_USER_REQUEST } from '../reducers/user';
@@ -44,6 +45,10 @@ const AppLayout = ({ children }) => {
       </Row>
     </div>
   );
+};
+
+AppLayout.propTypes = {
+  children: PropTypes.object.isRequired,
 };
 
 export default AppLayout;

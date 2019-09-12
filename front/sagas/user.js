@@ -1,5 +1,5 @@
 import {
-  all, fork, takeLatest, takeEvery, call, put, take, delay,
+  all, fork, takeLatest, takeEvery, call, put,
 } from 'redux-saga/effects';
 import axios from 'axios';
 import {
@@ -9,6 +9,9 @@ import {
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
   FOLLOW_USER_REQUEST, FOLLOW_USER_SUCCESS, FOLLOW_USER_FAILURE,
   UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_SUCCESS, UNFOLLOW_USER_FAILURE,
+  LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,
+  LOAD_FOLLOWINGS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE,
+  REMOVE_FOLLOWER_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE,
 } from '../reducers/user';
 
 function logInAPI(logInData) {
@@ -138,15 +141,15 @@ function* watchFollow() {
   yield takeEvery(FOLLOW_USER_REQUEST, follow);
 }
 
-function UnfollowAPI(userId) {
+function unfollowAPI(userId) {
   return axios.delete(`/user/${userId}/follow`, {
     withCredentials: true,
   });
 }
 
-function* Unfollow(action) {
+function* unfollow(action) {
   try {
-    const result = yield call(UnfollowAPI, action.data);
+    const result = yield call(unfollowAPI, action.data);
     yield put({
       type: UNFOLLOW_USER_SUCCESS,
       data: result.data,
@@ -161,7 +164,85 @@ function* Unfollow(action) {
 }
 
 function* watchUnfollow() {
-  yield takeEvery(UNFOLLOW_USER_REQUEST, Unfollow);
+  yield takeEvery(UNFOLLOW_USER_REQUEST, unfollow);
+}
+
+function loadFollowersAPI(userId) {
+  return axios.get(`/user/${userId}/followers`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollowers(action) {
+  try {
+    const result = yield call(loadFollowersAPI, action.data);
+    yield put({
+      type: LOAD_FOLLOWERS_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_FOLLOWERS_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadFollowers() {
+  yield takeEvery(LOAD_FOLLOWERS_REQUEST, loadFollowers);
+}
+
+function loadFollowingsAPI(userId) {
+  return axios.get(`/user/${userId}/followings`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollowings(action) {
+  try {
+    const result = yield call(loadFollowingsAPI, action.data);
+    yield put({
+      type: LOAD_FOLLOWINGS_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_FOLLOWINGS_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadFollowings() {
+  yield takeEvery(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
+}
+
+function removeFollowerAPI(userId) {
+  return axios.delete(`/user/${userId}/follower`, {
+    withCredentials: true,
+  });
+}
+
+function* removeFollower(action) {
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchRemoveFollwer() {
+  yield takeEvery(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
 export default function* userSaga() {
@@ -172,5 +253,8 @@ export default function* userSaga() {
     fork(watchSignup),
     fork(watchFollow),
     fork(watchUnfollow),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
+    fork(watchRemoveFollwer),
   ]);
 }
