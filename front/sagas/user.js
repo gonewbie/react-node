@@ -168,8 +168,9 @@ function* watchUnfollow() {
   yield takeEvery(UNFOLLOW_USER_REQUEST, unfollow);
 }
 
+// 초기 값 0 (자기 자신)으로 초기화
 function loadFollowersAPI(userId) {
-  return axios.get(`/user/${userId}/followers`, {
+  return axios.get(`/user/${userId || 0}/followers`, {
     withCredentials: true,
   });
 }
@@ -194,8 +195,9 @@ function* watchLoadFollowers() {
   yield takeEvery(LOAD_FOLLOWERS_REQUEST, loadFollowers);
 }
 
+// 초기 값 0 (자기 자신)으로 초기화
 function loadFollowingsAPI(userId) {
-  return axios.get(`/user/${userId}/followings`, {
+  return axios.get(`/user/${userId || 0}/followings`, {
     withCredentials: true,
   });
 }

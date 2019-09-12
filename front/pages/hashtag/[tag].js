@@ -5,18 +5,10 @@ import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
 import PostCard from '../../components/PostCard';
 
 const Hashtag = () => {
-  const router = useRouter();
-  const { tag } = router.query;
+  // const router = useRouter();
+  // const { tag } = router.query;
 
   const { mainPosts } = useSelector((state) => state.post);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch({
-      type: LOAD_HASHTAG_POSTS_REQUEST,
-      data: tag,
-    });
-  }, []);
 
   return (
     <div>
@@ -25,6 +17,16 @@ const Hashtag = () => {
       ))}
     </div>
   );
+};
+
+Hashtag.getInitialProps = async (context) => {
+  const { tag } = context.query;
+  console.log('hashtag getInitialProps', tag);
+  context.store.dispatch({
+    type: LOAD_HASHTAG_POSTS_REQUEST,
+    data: tag,
+  });
+  return { tag };
 };
 
 export default Hashtag;

@@ -64,6 +64,10 @@ ReactNode.propTypes = {
 const configureStore = (initialState, options) => {
   const sagaMiddleware = createSagaMiddleware();
   const middlewares = [sagaMiddleware];
+  // const middlewares = [sagaMiddleware, (store) => (next) => (action) => {
+  //   console.log(action); // action logging용 custom middleware
+  //   next(action);
+  // }];
   const enhancer = process.env.NODE_ENV === 'production'
     ? compose(applyMiddleware(...middlewares))
     : compose(

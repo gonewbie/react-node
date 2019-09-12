@@ -131,7 +131,7 @@ function* watchAddComment() {
 }
 
 function loadHashtagPostsAPI(tag) {
-  return axios.get(`/hashtag/${tag}`, {
+  return axios.get(`/hashtag/${encodeURIComponent(tag)}`, {
     withCredentials: true,
   });
 }
@@ -156,8 +156,9 @@ function* watchLoadHashtagPosts() {
   yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
 }
 
+// 초기 값 0(자기 자신)으로 초기화
 function loadUserPostsAPI(id) {
-  return axios.get(`/user/${id}/posts`, {
+  return axios.get(`/user/${id || 0}/posts`, {
     withCredentials: true,
   });
 }
