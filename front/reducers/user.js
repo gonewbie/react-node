@@ -11,6 +11,8 @@ export const initialState = {
   userInfo: null, // 남의 정보
   isEditingNickname: false, // 닉네임 변경 시도 중
   editNicknameErrorReason: '',
+  hasMoreFollowing: false,
+  hasMoreFollower: false,
 };
 
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
@@ -206,12 +208,14 @@ const reducer = (state = initialState, action) => {
     case LOAD_FOLLOWERS_REQUEST: {
       return {
         ...state,
+        hasMoreFollower: state.offset ? state.hasMoreFollower : true,
       };
     }
     case LOAD_FOLLOWERS_SUCCESS: {
       return {
         ...state,
-        followerList: action.data,
+        followerList: state.followerList.concat(action.data),
+        hasMoreFollower: action.data.length === 3,
       };
     }
     case LOAD_FOLLOWERS_FAILURE: {
@@ -222,12 +226,14 @@ const reducer = (state = initialState, action) => {
     case LOAD_FOLLOWINGS_REQUEST: {
       return {
         ...state,
+        hasMoreFollowing: state.offset ? state.hasMoreFollowing : true,
       };
     }
     case LOAD_FOLLOWINGS_SUCCESS: {
       return {
         ...state,
-        followingList: action.data,
+        followingList: state.followingList.concat(action.data),
+        hasMoreFollowing: action.data.length === 3,
       };
     }
     case LOAD_FOLLOWINGS_FAILURE: {

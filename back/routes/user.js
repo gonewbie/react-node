@@ -114,6 +114,8 @@ router.get('/:id/followers', isLoggedIn, async (req, res, next) => {
     });
     const followers = await user.getFollowers({
       attributes: ['id', 'nickname'],
+      offset: parseInt(req.query.offset, 10),
+      limit: parseInt(req.query.limit, 10),
     });
     return res.json(followers);
   } catch (e) {
@@ -129,6 +131,8 @@ router.get('/:id/followings', isLoggedIn, async (req, res, next) => {
     });
     const followings = await user.getFollowings({
       attributes: ['id', 'nickname'],
+      offset: parseInt(req.query.offset, 10),
+      limit: parseInt(req.query.limit, 10),
     });
     return res.json(followings);
   } catch (e) {
