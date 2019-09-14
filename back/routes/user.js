@@ -182,12 +182,16 @@ router.delete('/:id/follow', isLoggedIn, async (req, res, next) => {
 
 router.get('/:id/posts', async (req, res, next) => {
   try {
+    const where = {
+      // id가 0이면 자기 자신 가져오기
+      UserId: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0,
+      RetweetId: null,
+    };
+    if (parseInt(req.query.lastId, 10)) {
+      where.id = { [db.Sequelize.Op.lt]: parseInt(req.query.lastId, 10) };
+    }
     const posts = await db.Post.findAll({
-      where: {
-        // id가 0이면 자기 자신 가져오기
-        UserId: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0,
-        RetweetId: null,
-      },
+      where,
       include: [{
         model: db.User,
         attributes: ['id', 'nickname'],
@@ -199,6 +203,8 @@ router.get('/:id/posts', async (req, res, next) => {
         as: 'Likers',
         attributes: ['id'],
       }],
+      limit: parseInt(req.query.limit, 10),
+      order: [['createdAt', 'DESC']],
     });
     res.json(posts);
   } catch (e) {

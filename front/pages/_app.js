@@ -8,7 +8,6 @@ import withReduxSaga from 'next-redux-saga';
 import createSagaMiddleware from 'redux-saga';
 import axios from 'axios';
 
-import Axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import reducer from '../reducers';
 import rootSaga from '../sagas';
@@ -37,8 +36,7 @@ ReactNode.getInitialProps = async (context) => {
   const { ctx, Component } = context;
   // 유저 정보 로딩 : 순서대로 실행되므로 유저 정보부터
   const state = ctx.store.getState();
-  // eslint-disable-next-line prefer-destructuring
-  const cookie = ctx.isServer ? ctx.req.headers.cookie : '';
+  const cookie = ctx.isServer ? ctx.req.headers.cookie : null;
   if (ctx.isServer && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }

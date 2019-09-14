@@ -13,8 +13,8 @@ import PostCard from '../components/PostCard';
 const Profile = () => {
   const dispatch = useDispatch();
   const {
- followingList, followerList, hasMoreFollower, hasMoreFollowing 
-} = useSelector((state) => state.user);
+    followingList, followerList, hasMoreFollower, hasMoreFollowing,
+  } = useSelector((state) => state.user);
   const { mainPosts } = useSelector((state) => state.post);
 
   const onUnfollow = useCallback((userId) => () => {

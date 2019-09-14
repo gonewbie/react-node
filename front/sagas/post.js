@@ -1,5 +1,5 @@
 import {
-  all, fork, takeLatest, put, call,
+  all, fork, takeLatest, throttle, put, call,
 } from 'redux-saga/effects';
 import axios from 'axios';
 import {
@@ -17,15 +17,15 @@ import {
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
 
-function loadMainPostsAPI() {
-  return axios.get('/posts', {
+function loadMainPostsAPI(lastId = 0, limit = 10) {
+  return axios.get(`/posts?lastId=${lastId}&limit=${limit}`, {
     withCredentials: true,
   });
 }
 
-function* loadMainPosts() {
+function* loadMainPosts(action) {
   try {
-    const result = yield call(loadMainPostsAPI);
+    const result = yield call(loadMainPostsAPI, action.lastId);
     yield put({
       type: LOAD_MAIN_POSTS_SUCCESS,
       data: result.data,
@@ -40,7 +40,7 @@ function* loadMainPosts() {
 }
 
 function* watchLoadMainPosts() {
-  yield takeLatest(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
+  yield throttle(2000, LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
 }
 
 function addPostAPI(postData) {
@@ -131,15 +131,15 @@ function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
 
-function loadHashtagPostsAPI(tag) {
-  return axios.get(`/hashtag/${encodeURIComponent(tag)}`, {
+function loadHashtagPostsAPI(tag, lastId = 0, limit = 10) {
+  return axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId}&limit=${limit}`, {
     withCredentials: true,
   });
 }
 
 function* loadHashtagPosts(action) {
   try {
-    const result = yield call(loadHashtagPostsAPI, action.data);
+    const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
     yield put({
       type: LOAD_HASHTAG_POSTS_SUCCESS,
       data: result.data,
@@ -158,15 +158,15 @@ function* watchLoadHashtagPosts() {
 }
 
 // 초기 값 0(자기 자신)으로 초기화
-function loadUserPostsAPI(id) {
-  return axios.get(`/user/${id || 0}/posts`, {
+function loadUserPostsAPI(id, lastId = 0, limit = 10) {
+  return axios.get(`/user/${id || 0}/posts?lastId=${lastId}&limit=${limit}`, {
     withCredentials: true,
   });
 }
 
 function* loadUserPosts(action) {
   try {
-    const result = yield call(loadUserPostsAPI, action.data);
+    const result = yield call(loadUserPostsAPI, action.data, action.lastId);
     yield put({
       type: LOAD_USER_POSTS_SUCCESS,
       data: result.data,
