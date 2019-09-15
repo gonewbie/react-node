@@ -1,3 +1,5 @@
+import produce from 'immer';
+
 export const initialState = {
   mainPosts: [], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
@@ -60,205 +62,141 @@ export const EDIT_POST_REQUEST = 'EDIT_POST_REQUEST';
 export const EDIT_POST_SUCCESS = 'EDIT_POST_SUCCESS';
 export const EDIT_POST_FAILURE = 'EDIT_POST_FAILURE';
 
-export default (state = initialState, action) => {
+export default (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
-    case LOAD_MAIN_POSTS_REQUEST:
-    case LOAD_HASHTAG_POSTS_REQUEST:
-    case LOAD_USER_POSTS_REQUEST: {
-      return {
-        ...state,
-        mainPosts: !action.lastId ? [] : state.mainPosts,
-        hasMorePost: action.lastId ? state.hasMorePost : true,
-      };
+    case UPLOAD_IMAGES_REQUEST: {
+      break;
     }
-    case LOAD_MAIN_POSTS_SUCCESS:
-    case LOAD_HASHTAG_POSTS_SUCCESS:
-    case LOAD_USER_POSTS_SUCCESS: {
-      return {
-        ...state,
-        mainPosts: state.mainPosts.concat(action.data),
-        hasMorePost: action.data.length === 10,
-      };
+    case UPLOAD_IMAGES_SUCCESS: {
+      action.data.forEach((p) => {
+        draft.imagePaths.push(p);
+      });
+      break;
     }
-    case LOAD_MAIN_POSTS_FAILURE:
-    case LOAD_HASHTAG_POSTS_FAILURE:
-    case LOAD_USER_POSTS_FAILURE: {
-      return {
-        ...state,
-      };
+    case UPLOAD_IMAGES_FAILURE: {
+      break;
     }
     case REMOVE_IMAGE: {
-      return {
-        ...state,
-        imagePaths: state.imagePaths.filter((v, i) => i !== action.index),
-      };
+      const index = draft.imagePaths.findIndex((v, i) => i === action.index);
+      draft.imagePaths.splice(index, 1);
+      break;
     }
     case ADD_POST_REQUEST: {
-      return {
-        ...state,
-        isAddingPost: true,
-        addPostErrorReason: '',
-        postAdded: false,
-      };
+      draft.isAddingPost = true;
+      draft.addPostErrorReason = '';
+      draft.postAdded = false;
+      break;
     }
     case ADD_POST_SUCCESS: {
-      return {
-        ...state,
-        isAddingPost: false,
-        mainPosts: [action.data, ...state.mainPosts],
-        postAdded: true,
-        imagePaths: [],
-      };
+      draft.isAddingPost = false;
+      draft.mainPosts.unshift(action.data);
+      draft.postAdded = true;
+      draft.imagePaths = [];
+      break;
     }
     case ADD_POST_FAILURE: {
-      return {
-        ...state,
-        isAddingPost: false,
-        addPostErrorReason: action.error,
-      };
+      draft.isAddingPost = false;
+      draft.addPostErrorReason = action.error;
+      break;
     }
     case ADD_COMMENT_REQUEST: {
-      return {
-        ...state,
-        isAddingComment: true,
-        addCommentErrorReason: '',
-        commentAdded: false,
-      };
+      draft.isAddingComment = true;
+      draft.addCommentErrorReason = '';
+      draft.commentAdded = false;
+      break;
     }
     case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, action.data.comment];
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Comments };
-      return {
-        ...state,
-        isAddingComment: false,
-        mainPosts,
-        commentAdded: true,
-      };
+      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.postId);
+      draft.mainPosts[postIndex].Comments.push(action.data.comment);
+      draft.isAddingComment = false;
+      draft.commentAdded = true;
+      break;
     }
     case ADD_COMMENT_FAILURE: {
-      return {
-        ...state,
-        isAddingComment: false,
-        addCommentErrorReason: action.error,
-      };
+      draft.isAddingComment = false;
+      draft.addCommentErrorReason = action.error;
+      break;
     }
     case LOAD_COMMENTS_REQUEST: {
-      return {
-        ...state,
-      };
+      break;
     }
     case LOAD_COMMENTS_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Comments = action.data.comments;
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Comments };
-      return {
-        ...state,
-        mainPosts,
-      };
+      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.postId);
+      draft.mainPosts[postIndex].Comments = action.data.comments;
+      break;
     }
     case LOAD_COMMENTS_FAILURE: {
       return {
         ...state,
       };
     }
-    case UPLOAD_IMAGES_REQUEST: {
-      return {
-        ...state,
-      };
+    case LOAD_MAIN_POSTS_REQUEST:
+    case LOAD_HASHTAG_POSTS_REQUEST:
+    case LOAD_USER_POSTS_REQUEST: {
+      draft.mainPosts = !action.lastId ? [] : draft.mainPosts;
+      draft.hasMorePost = action.lastId ? draft.hasMorePost : true;
+      break;
     }
-    case UPLOAD_IMAGES_SUCCESS: {
-      return {
-        ...state,
-        imagePaths: [...state.imagePaths, ...action.data],
-      };
+    case LOAD_MAIN_POSTS_SUCCESS:
+    case LOAD_HASHTAG_POSTS_SUCCESS:
+    case LOAD_USER_POSTS_SUCCESS: {
+      action.data.forEach((p) => {
+        draft.mainPosts.push(p);
+      });
+      draft.hasMorePost = action.data.length === 10;
+      break;
     }
-    case UPLOAD_IMAGES_FAILURE: {
-      return {
-        ...state,
-      };
+    case LOAD_MAIN_POSTS_FAILURE:
+    case LOAD_HASHTAG_POSTS_FAILURE:
+    case LOAD_USER_POSTS_FAILURE: {
+      break;
     }
     case LIKE_POST_REQUEST: {
-      return {
-        ...state,
-      };
+      break;
     }
     case LIKE_POST_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Likers = [{ id: action.data.userId }, ...post.Likers];
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Likers };
-      return {
-        ...state,
-        mainPosts,
-      };
+      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.postId);
+      draft.mainPosts[postIndex].Likers.unshift({ id: action.data.userId });
+      break;
     }
     case LIKE_POST_FAILURE: {
-      return {
-        ...state,
-      };
+      break;
     }
     case UNLIKE_POST_REQUEST: {
-      return {
-        ...state,
-      };
+      break;
     }
     case UNLIKE_POST_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Likers = post.Likers.filter((v) => v.id !== action.data.userId);
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Likers };
-      return {
-        ...state,
-        mainPosts,
-      };
+      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const likeIndex = draft.mainPosts[postIndex].Likers.findIndex((v) => v.id === action.data.userId);
+      draft.mainPosts[postIndex].Likers.splice(likeIndex, 1);
+      break;
     }
     case UNLIKE_POST_FAILURE: {
-      return {
-        ...state,
-      };
+      break;
     }
     case RETWEET_REQUEST: {
-      return {
-        ...state,
-      };
+      break;
     }
     case RETWEET_SUCCESS: {
-      return {
-        ...state,
-        mainPosts: [action.data, ...state.mainPosts],
-      };
+      draft.mainPosts.unshift(action.data);
+      break;
     }
     case RETWEET_FAILURE: {
-      return {
-        ...state,
-      };
+      break;
     }
     case REMOVE_POST_REQUEST: {
-      return {
-        ...state,
-      };
+      break;
     }
     case REMOVE_POST_SUCCESS: {
-      return {
-        ...state,
-        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
-      };
+      const index = draft.mainPosts.findIndex((v) => v.id === action.data);
+      draft.mainPosts.splice(index, 1);
+      break;
     }
     case REMOVE_POST_FAILURE: {
-      return {
-        ...state,
-      };
+      break;
     }
-    default:
-      return {
-        ...state,
-      };
+    default: {
+      break;
+    }
   }
-};
+});
