@@ -10,6 +10,7 @@ export const initialState = {
   addCommentErrorReason: '',
   commentAdded: false,
   hasMorePost: false,
+  singlePost: null,
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';
@@ -61,6 +62,10 @@ export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 export const EDIT_POST_REQUEST = 'EDIT_POST_REQUEST';
 export const EDIT_POST_SUCCESS = 'EDIT_POST_SUCCESS';
 export const EDIT_POST_FAILURE = 'EDIT_POST_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export default (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
@@ -193,6 +198,16 @@ export default (state = initialState, action) => produce(state, (draft) => {
       break;
     }
     case REMOVE_POST_FAILURE: {
+      break;
+    }
+    case LOAD_POST_REQUEST: {
+      break;
+    }
+    case LOAD_POST_SUCCESS: {
+      draft.singlePost = action.data;
+      break;
+    }
+    case LOAD_POST_FAILURE: {
       break;
     }
     default: {

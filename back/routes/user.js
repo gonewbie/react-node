@@ -147,7 +147,7 @@ router.delete('/:id/follower', isLoggedIn, async (req, res, next) => {
       where: { id: req.params.id },
     });
     await me.removeFollower(req.params.id);
-    return res.send(req.params.id);
+    res.send(req.params.id);
   } catch (e) {
     console.error(e);
     next(e);

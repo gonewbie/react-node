@@ -1,5 +1,4 @@
 import React from 'react';
-import Head from 'next/head';
 import PropTypes from 'prop-types';
 import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
@@ -7,6 +6,8 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import withReduxSaga from 'next-redux-saga';
 import createSagaMiddleware from 'redux-saga';
 import axios from 'axios';
+import Helmet from 'react-helmet';
+import { Container } from 'next/app';
 
 import AppLayout from '../components/AppLayout';
 import reducer from '../reducers';
@@ -14,22 +15,42 @@ import rootSaga from '../sagas';
 import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const ReactNode = ({ Component, store, pageProps }) => (
-  <Provider store={store}>
-    <Head>
-      <title>NodeBird</title>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.22.0/antd.css"
+  <Container>
+    <Provider store={store}>
+      <Helmet
+        title="NodeBird"
+        htmlAttributes={{ lang: 'ko' }}
+        meta={[{
+          charset: 'UTF-8',
+        }, {
+          name: 'viewport', content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=yes,viewport-fit=cover',
+        }, {
+          'http-equiv': 'X-UA-Compatible', content: 'IE=edge',
+        }, {
+          name: 'description', content: '리액트를 활용한 NodeBird SNS',
+        }, {
+          property: 'og:title', content: 'NodeBird',
+        }, {
+          property: 'og:description', content: '리액트를 활용한 NodeBird SNS',
+        }, {
+          property: 'og:type', content: 'website',
+        }]}
+        link={[{
+          rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.22.0/antd.css',
+        }, {
+          rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css',
+        }, {
+          rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css',
+        }]}
+        script={[{
+          src: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.22.0/antd.js',
+        }]}
       />
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.22.0/antd.js" />
-      {/* react-slick */}
-      <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
-    </Head>
-    <AppLayout>
-      <Component {...pageProps} />
-    </AppLayout>
-  </Provider>
+      <AppLayout>
+        <Component {...pageProps} />
+      </AppLayout>
+    </Provider>
+  </Container>
 );
 
 ReactNode.getInitialProps = async (context) => {
@@ -62,10 +83,6 @@ ReactNode.propTypes = {
 const configureStore = (initialState, options) => {
   const sagaMiddleware = createSagaMiddleware();
   const middlewares = [sagaMiddleware];
-  // const middlewares = [sagaMiddleware, (store) => (next) => (action) => {
-  //   console.log(action); // action logging용 custom middleware
-  //   next(action);
-  // }];
   const enhancer = process.env.NODE_ENV === 'production'
     ? compose(applyMiddleware(...middlewares))
     : compose(
