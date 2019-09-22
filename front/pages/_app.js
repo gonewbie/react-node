@@ -69,7 +69,7 @@ ReactNode.getInitialProps = async (context) => {
   // 페이지 정보 로딩
   let pageProps = {};
   if (Component.getInitialProps) {
-    pageProps = await Component.getInitialProps(ctx);
+    pageProps = await Component.getInitialProps(ctx) || {};
   }
   return { pageProps };
 };

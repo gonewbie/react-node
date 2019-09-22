@@ -17,3 +17,6 @@ react 강좌를 수강 및 진행 과정을 적은 프로젝트
 
 > **['19.09.21]** 단일 post 페이지 생성 및 SEO 진행
 > 커스텀 Document 생성 및 전체 페이지 react-helmet 적용
+
+> **['19.09.22]** styled-component 및 SSR 적용
+> 기타 key 중복 정리 및 오류 수정

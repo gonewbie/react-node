@@ -1,9 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
-import PostCard from '../../components/PostCard';
+import PostCard from '../../containers/PostCard';
 
 const Hashtag = ({ tag }) => {
   const { mainPosts, hasMorePost } = useSelector((state) => state.post);
@@ -31,7 +30,7 @@ const Hashtag = ({ tag }) => {
   return (
     <div>
       {mainPosts.map((c) => (
-        <PostCard key={+c.createdAt} post={c} />
+        <PostCard key={c.id} post={c} />
       ))}
     </div>
   );

@@ -2,15 +2,11 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, Avatar } from 'antd';
 import PropTypes from 'prop-types';
-// import { useRouter } from 'next/router';
 import { LOAD_USER_POSTS_REQUEST } from '../../reducers/post';
 import { LOAD_USER_REQUEST } from '../../reducers/user';
-import PostCard from '../../components/PostCard';
+import PostCard from '../../containers/PostCard';
 
 const User = ({ id }) => {
-  // const router = useRouter();
-  // const { id } = router.query;
-
   const { mainPosts, hasMorePost } = useSelector((state) => state.post);
   const { userInfo } = useSelector((state) => state.user);
 
@@ -66,7 +62,7 @@ const User = ({ id }) => {
         )
         : null}
       {mainPosts.map((c) => (
-        <PostCard key={+c.createdAt} post={c} />
+        <PostCard key={c.id} post={c} />
       ))}
     </div>
   );
