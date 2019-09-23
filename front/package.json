@@ -4,16 +4,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "next",
-    "build": "next build",
-    "start": "next start",
+    "build": "cross-env ANALYZE=true next build",
+    "prestart": "yarn build",
+    "start": "cross-env NODE_ENV=production next start",
     "eslint-test": "eslint --debug pages/signup.js"
   },
   "author": "gonewbie",
   "license": "MIT",
   "dependencies": {
+    "@next/bundle-analyzer": "^9.0.6",
     "antd": "^3.21.4",
     "axios": "^0.19.0",
+    "compression-webpack-plugin": "^3.0.0",
+    "cross-env": "^6.0.0",
     "immer": "^4.0.0",
+    "moment": "^2.24.0",
     "next": "^9.0.3",
     "next-redux-saga": "^4.0.2",
     "next-redux-wrapper": "^3.0.0",
@@ -24,7 +29,9 @@
     "react-redux": "^7.1.0",
     "redux": "^4.0.4",
     "redux-saga": "^1.0.5",
-    "styled-components": "^4.3.2"
+    "styled-components": "^4.3.2",
+    "webpack": "^4.39.1",
+    "webpack-ant-icon-loader": "^1.0.8"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
@@ -34,7 +41,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
-    "nodemon": "^1.19.1",
-    "webpack": "^4.39.1"
+    "nodemon": "^1.19.1"
   }
 }

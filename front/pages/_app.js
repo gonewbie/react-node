@@ -41,6 +41,10 @@ const ReactNode = ({ Component, store, pageProps }) => (
           rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css',
         }, {
           rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css',
+        }, {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/static/favicon.ico',
         }]}
         script={[{
           src: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.22.0/antd.js',
